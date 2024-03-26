@@ -1,10 +1,13 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+require('dotenv').config();
 
+
+const jwtSecret = process.env.JWT_SECRET;
 const requireAuth = (req, res, next) => {
     const token = req.cookies.jwt;
     if (token){
-        jwt.verify(token, 'fortune rabbit review globe document system', (err, decodedToken) => {
+        jwt.verify(token, jwtSecret, (err, decodedToken) => {
             if (err){
                 console.log(err.message);
                 // If there will be login page -- change redirect to go there
@@ -23,7 +26,7 @@ const requireAuth = (req, res, next) => {
 const getCurrentUser = async (req, res, next) => {
     const token = req.cookies.jwt;
     if (token){
-        jwt.verify(token, 'fortune rabbit review globe document system', async (err, decodedToken) => {
+        jwt.verify(token, jwtSecret, async (err, decodedToken) => {
             if (err) {
                 console.log(err.message);
                 req.currentUser = null;

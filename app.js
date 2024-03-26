@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const {requireAuth} = require('./middleware/authMiddleware')
+require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
@@ -13,11 +14,12 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-const dbURI = "mongodb+srv://vernmaks:pa$$word@cluster0.h6s4slq.mongodb.net/expletech_test_case?retryWrites=true&w=majority&appName=Cluster0";
+const port = process.env.PORT;
+const dbURI = process.env.DB_URI;
 mongoose.connect(dbURI)
     .then((result) => {
         console.log('Connected! Now listening for requests.')
-        app.listen(3000)
+        app.listen(port)
     })
     .catch((err) => {
         console.log('Connection to database failed, check details:', err)
