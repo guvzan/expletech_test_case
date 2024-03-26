@@ -13,7 +13,6 @@ const requireAuth = (req, res, next) => {
                 // If there will be login page -- change redirect to go there
                 res.redirect('/');
             } else{
-                // console.log('Logged in! Token:', decodedToken);
                 next();
             }
         });
@@ -43,7 +42,19 @@ const getCurrentUser = async (req, res, next) => {
 };
 
 
+const checkRole = (roles) => {
+    return (req, res, next) => {
+        if (req.currentUser.role && roles.includes(req.currentUser.role)) {
+            next();
+        } else {
+            res.status(403).json({ error: 'You do not have access to this endpoint!' });
+        }
+    };
+};
+
+
 module.exports = {
     requireAuth,
-    getCurrentUser
+    getCurrentUser,
+    checkRole
 }

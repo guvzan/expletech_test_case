@@ -94,11 +94,22 @@ const updateTask = async (req, res) => {
     }
 };
 
+const getAllTasks = async (req, res) => {
+    try{
+        const allTasks = await Task.find();
+        res.status(200).json({allTasks});
+    }catch (err){
+        console.log('Error occurred while getting all tasks: ', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
 
 module.exports = {
     getTasks,
     createTask,
     getTaskById,
     deleteTask,
-    updateTask
+    updateTask,
+    getAllTasks
 }

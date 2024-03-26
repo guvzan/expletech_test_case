@@ -37,10 +37,10 @@ const createJWTToken = (id) => {
 }
 
 const post_signup = async (req, res) => {
-    const {username, email, password} = req.body;
+    const {username, email, password, role} = req.body;
 
     try{
-        const user = await User.create({username, email, password});
+        const user = await User.create({username, email, password, role});
         const token = createJWTToken(user._id);
         res.cookie('jwt', token, {httpOnly: true, maxAge: maxAge * 1000});
         res.status(201).json({user: user._id})
