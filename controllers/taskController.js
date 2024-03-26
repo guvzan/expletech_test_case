@@ -1,20 +1,29 @@
 const Task = require('../models/Task');
 
 
-const getTasks = (req, res) => {
-    if (req.currentUser){
-        Task.find({author: req.currentUser})
-            .then((result) => {
-                res.status(200).json(result);
-            })
-            .catch((err) => {
-                console.log('Error occured while searching tasks for this user', err);
-                res.status(404).send('Not Found!');
-            })
-    }else{
-        res.status(404).send('Not Found!');
+const getTasks = async (req, res) => {
+    try {
+        // Parse query parameters
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const sortField = req.query.sortField || 'createdAt';
+        const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
+
+        const offset = (page - 1) * limit;
+
+        const query = { author: req.currentUser };
+
+        const tasks = await Task.find(query)
+            .sort({ [sortField]: sortOrder })
+            .skip(offset)
+            .limit(limit);
+
+        res.status(200).json({ tasks });
+    } catch (err) {
+        console.error('Error fetching tasks:', err);
+        res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
 
 const getTaskById = (req, res) => {
     if(req.currentUser){
