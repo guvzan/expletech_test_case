@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
-
 const {requireAuth} = require('./middleware/authMiddleware')
+
+const authRoutes = require('./routes/authRoutes');
+const taskRoutes = require('./routes/taskRoutes');
+
 
 const app = express();
 
@@ -30,4 +32,10 @@ app.get('/protected', requireAuth, (req, res) => {
 })
 
 app.use(authRoutes);
+app.use(taskRoutes);
+
+app.get('*', function(req, res){
+    res.status(404).send('Page not found');
+});
+
 
