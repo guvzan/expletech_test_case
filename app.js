@@ -40,4 +40,11 @@ app.get('*', function(req, res){
     res.status(404).send('Page not found');
 });
 
+//Catch uncaught exceptions
+process.on('uncaughtException', function (err) {
+    // handle the error safely
+    console.log(err);
+    logger.error(err.stack);
+});
+
 

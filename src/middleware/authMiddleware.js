@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../src/models/User');
 require('dotenv').config();
 
 
@@ -23,21 +23,27 @@ const requireAuth = (req, res, next) => {
 }
 
 const getCurrentUser = async (req, res, next) => {
-    const token = req.cookies.jwt;
-    if (token){
-        jwt.verify(token, jwtSecret, async (err, decodedToken) => {
-            if (err) {
-                console.log(err.message);
-                req.currentUser = null;
-                next();
-            } else {
-                req.currentUser = await User.findById(decodedToken.id);
-                next();
-            }
-        });
-    } else{
-        req.currentUser = null;
-        next();
+    try {
+        const token = req.cookies.jwt;
+        
+        if (token){
+            jwt.verify(token, jwtSecret, async (err, decodedToken) => {
+                if (err) {
+                    console.log(err.message);
+                    req.currentUser = null;
+                    throw new Error("JWT verification failed!")
+                } else {
+                    req.currentUser = await User.findById(decodedToken.id);
+                    next();
+                }
+            });
+        } else{
+            req.currentUser = null;
+            throw new Error("JWT verification failed!")
+        }
+    } catch(e) {
+        console.log(e);
+        res.status(401).json({ error: 'Unauthorized' });
     }
 };
 
